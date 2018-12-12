@@ -1,4 +1,4 @@
-# sync-state
+# miniprogram-sync-state
 
 原生小程序同步状态库。
 
@@ -14,13 +14,16 @@ npm install --save miniprogram-sync-state
 
 小程序开发者工具 -> 详情 -> 使用npm模块
 
-小程序开发工具 -> 工具 -> 构建npm
+小程序开发者工具 -> 工具 -> 构建npm
 
 ```
 const { createStore } = require('miniprogram-sync-state')
 ```
 
-#### 项目引入
+#### 直接引入
 
-copy src文件夹下index.js置于项目文件夹内
+copy src文件夹下的index.js置于项目文件夹内引用
 
+## 使用
+
+具体使用可查看demo

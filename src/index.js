@@ -1,9 +1,11 @@
+const _toString = Object.prototype.toString
+
 function isFunction(obj) {
     return typeof obj === 'function' || false
 }
 
 function isObject(obj) {
-    return obj.toString() === '[object Object]' || false
+    return _toString.call(obj) === '[object Object]' || false
 }
 
 let _state = null
