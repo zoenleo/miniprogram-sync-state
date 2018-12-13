@@ -29,7 +29,68 @@ const { createStore } = require('../../libs/miniprogram-sync-state/index.js')
 
 ## 使用
 
-具体使用可查看demo
+```js
+// app.js
+
+const initStore = {
+    hasLogin: false,    
+    userName: ''
+}
+const { createStore } = require('miniprogram-sync-state')
+const Store = createStore(initStore)
+
+App({
+    onLaunch() {},
+    Store
+})
+
+
+```
+
+```js
+// pages/login/index.js
+
+let app = getApp()
+const { connect } = app.Store
+
+const LoginPage = {
+    onReady(e) {},
+    onShow() {},
+    bindUserNameChange(e) {
+        this.setData({
+            username: e.detail.value
+        })
+    },
+    bindLogin() {
+        if (!this.data.username) return
+        this.login(this.data.username)
+        wx.navigateBack({
+            delta: 1
+        })
+    }
+}
+const ConnectPage = connect(
+    ({hasLogin, userName}) => {
+        return {
+            hasLogin,
+            userName
+        }
+    },
+    (setState, state) => ({
+        login(userName) {
+            setState({
+                hasLogin: true,
+                userName
+            })
+        }
+    })
+)(LoginPage)
+
+Page(ConnectPage)
+
+```
+
+更具体使用可查看demo
 
 ## 项目说明
 
