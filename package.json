@@ -52,8 +52,7 @@
 		"webpack": "^4.16.5",
 		"webpack-node-externals": "^1.7.2"
 	},
-	"dependencies": {
-	},
+	"dependencies": {},
 	"jest": {
 		"testEnvironment": "jsdom",
 		"testURL": "https://jest.test",
