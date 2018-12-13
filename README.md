@@ -23,7 +23,14 @@ const { createStore } = require('miniprogram-sync-state')
 #### 直接引入
 
 copy src文件夹下的index.js置于项目文件夹内引用
+```
+const { createStore } = require('../../libs/miniprogram-sync-state/index.js')
+```
 
 ## 使用
 
 具体使用可查看demo
+
+## 项目说明
+
+请见我的[掘金](https://juejin.im/post/5c0632b351882526f96b5164)
