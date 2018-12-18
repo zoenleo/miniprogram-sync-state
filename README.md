@@ -22,12 +22,14 @@ const { createStore } = require('miniprogram-sync-state')
 
 #### 直接引入
 
-copy src文件夹下的index.js置于项目文件夹内引用
+复制src文件夹下的index.js置于项目文件夹内引用
 ```
 const { createStore } = require('../../libs/miniprogram-sync-state/index.js')
 ```
 
 ## 使用
+
+#### 示例
 
 ```js
 // app.js
@@ -91,6 +93,25 @@ Page(ConnectPage)
 ```
 
 更具体使用可查看demo
+
+#### 注意
+
+禁止在任何能获取到`state实例`的地方直接修改`state`，以免造成未知错误（这一点同`react`），虽然可以在状态库中做深拷贝避免此隐患，但是需要考虑性能问题以及是否必要，最终决定采用规范的方式做限制。
+
+```js
+// 🚫 以下为禁止示例
+
+const ConnectPage = connect(
+    state => {
+        state.userInfo.userName = 'err use'
+        return {
+            userInfo: state.userInfo
+        }
+    }
+)(Page)
+
+```
+
 
 ## 项目说明
 
