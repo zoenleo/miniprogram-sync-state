@@ -9,6 +9,6 @@
   "author": "zoen",
   "license": "MIT",
   "dependencies": {
-    "miniprogram-sync-state": "^1.0.1"
+    "miniprogram-sync-state": "^1.0.2"
   }
 }

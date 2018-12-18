@@ -92,7 +92,7 @@ Page(ConnectPage)
 
 ```
 
-更具体使用可查看demo
+更具体使用可查看[demo](https://github.com/zoenleo/miniprogram-sync-state/tree/master/demo)
 
 #### 注意
 
