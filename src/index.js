@@ -55,7 +55,7 @@ function connect(mapStateToData, mapMethodTopPage) {
         }
         const onLoad = pageObject.onLoad
         const onUnload = pageObject.onUnload
-        pageObject.onLoad = function() {
+        pageObject.onLoad = function(options) {
             if (!~_subjects.indexOf(this)) {
                 this.setData(mapStateToData ? mapStateToData(_state) : {})
                 _subjects.push(this)
@@ -63,7 +63,7 @@ function connect(mapStateToData, mapMethodTopPage) {
                     this.setData(mapStateToData ? mapStateToData(_state) : {})
                 })
             }
-            onLoad && onLoad.call(this)
+            onLoad && onLoad.call(this, options)
         }
         pageObject.onUnload = function() {
             const index = _subjects.indexOf(this)
