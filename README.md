@@ -111,8 +111,3 @@ const ConnectPage = connect(
 )(Page)
 
 ```
-
-
-## 项目说明
-
-请见我的[掘金](https://juejin.im/post/5c0632b351882526f96b5164)
