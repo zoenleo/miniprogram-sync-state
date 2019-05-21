@@ -12,19 +12,19 @@ let _state = null
 const _subjects = []
 const _observers = []
 
-function connect(mapStateToData, mapMethodTopPage) {
-    if (mapStateToData !== undefined && !isFunction(mapStateToData)) {
+function connect(mapStateToData, mapMethodToPage) {
+    if (!isFunction(mapStateToData)) {
         throw new Error(
             `connect first param accept a function, but got a ${typeof mapStateToData}`
         )
     }
-    if (mapMethodTopPage !== undefined && !isFunction(mapMethodTopPage)) {
+    if (!isFunction(mapMethodToPage)) {
         throw new Error(
-            `connect second param accept a function, but got a ${typeof mapMethodTopPage}`
+            `connect second param accept a function, but got a ${typeof mapMethodToPage}`
         )
     }
     const dataMap = mapStateToData ? mapStateToData(_state) : {}
-    const methodMap = mapMethodTopPage ? mapMethodTopPage(setState, _state) : {}
+    const methodMap = mapMethodToPage ? mapMethodToPage(setState, _state) : {}
     return function(pageObject) {
         if (!isObject(pageObject)) {
             throw new Error(
@@ -32,8 +32,8 @@ function connect(mapStateToData, mapMethodTopPage) {
             )
         }
         for (const dataKey in dataMap) {
-            if (pageObject.data) {
-                if (pageObject.data[dataKey]) {
+            if (pageObject.hasOwnProperty(data)) {
+                if (pageObject.data.hasOwnProperty(dataKey)) {
                     console.warn(
                         `page object had data ${dataKey}, connect map will cover this prop.`
                     )
@@ -46,7 +46,7 @@ function connect(mapStateToData, mapMethodTopPage) {
             }
         }
         for (const methodKey in methodMap) {
-            if (pageObject[methodKey]) {
+            if (pageObject.hasOwnProperty(methodKey)) {
                 console.warn(
                     `page object had method ${methodKey}, connect map will cover this method.`
                 )
