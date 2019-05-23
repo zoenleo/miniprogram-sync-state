@@ -13,12 +13,12 @@ const _subjects = []
 const _observers = []
 
 function connect(mapStateToData, mapMethodToPage) {
-    if (!isFunction(mapStateToData)) {
+    if (mapStateToData !== undefined && !isFunction(mapStateToData)) {
         throw new Error(
             `connect first param accept a function, but got a ${typeof mapStateToData}`
         )
     }
-    if (!isFunction(mapMethodToPage)) {
+    if (mapStateToData !== undefined && !isFunction(mapMethodToPage)) {
         throw new Error(
             `connect second param accept a function, but got a ${typeof mapMethodToPage}`
         )
@@ -32,7 +32,7 @@ function connect(mapStateToData, mapMethodToPage) {
             )
         }
         for (const dataKey in dataMap) {
-            if (pageObject.hasOwnProperty(data)) {
+            if (pageObject.hasOwnProperty('data')) {
                 if (pageObject.data.hasOwnProperty(dataKey)) {
                     console.warn(
                         `page object had data ${dataKey}, connect map will cover this prop.`
