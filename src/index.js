@@ -18,7 +18,7 @@ function connect(mapStateToData, mapMethodToPage) {
             `connect first param accept a function, but got a ${typeof mapStateToData}`
         )
     }
-    if (mapStateToData !== undefined && !isFunction(mapMethodToPage)) {
+    if (mapMethodToPage !== undefined && !isFunction(mapMethodToPage)) {
         throw new Error(
             `connect second param accept a function, but got a ${typeof mapMethodToPage}`
         )
