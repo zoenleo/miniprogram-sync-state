@@ -1,4 +1,4 @@
-import { isFunction, isObject } from './utils'
+import { isFunction, isObject, Warn, Err } from './utils'
 
 /**
  * 状态存储
@@ -13,12 +13,12 @@ let _options = null
 /**
  * 页面实例
  */
-const _subjects = []
+let _subjects = []
 
 /**
  * 观察者
  */
-const _observers = []
+let _observers = []
 
 /**
  * 连接器
@@ -29,12 +29,12 @@ const _observers = []
 function connect(mapStateToData, mapMethodToPage) {
     const { slow } = _options
     if (mapStateToData !== undefined && !isFunction(mapStateToData)) {
-        throw new Error(
+        Err(
             `connect first param accept a function, but got a ${typeof mapStateToData}`
         )
     }
     if (mapMethodToPage !== undefined && !isFunction(mapMethodToPage)) {
-        throw new Error(
+        Err(
             `connect second param accept a function, but got a ${typeof mapMethodToPage}`
         )
     }
@@ -42,14 +42,14 @@ function connect(mapStateToData, mapMethodToPage) {
     const methodMap = mapMethodToPage ? mapMethodToPage(setState, _state) : {}
     return function(pageObject) {
         if (!isObject(pageObject)) {
-            throw new Error(
+            Err(
                 `page object connect accept a page object, but got a ${typeof pageObject}`
             )
         }
         for (const dataKey in dataMap) {
-            if (pageObject.hasOwnProperty('data')) {
+            if (pageObject.data) {
                 if (pageObject.data.hasOwnProperty(dataKey)) {
-                    console.warn(
+                    Warn(
                         `page object had data ${dataKey}, connect map will cover this prop.`
                     )
                 }
@@ -62,7 +62,7 @@ function connect(mapStateToData, mapMethodToPage) {
         }
         for (const methodKey in methodMap) {
             if (pageObject.hasOwnProperty(methodKey)) {
-                console.warn(
+                Warn(
                     `page object had method ${methodKey}, connect map will cover this method.`
                 )
             }
@@ -118,7 +118,7 @@ function createStore(state, options = {}) {
     _options = options
     if (!isObject(state)) throw Error('init state can not be undefined')
     if (_state) {
-        console.warn(
+        Warn(
             'there are multiple store active. This might lead to unexpected results.'
         )
     }
