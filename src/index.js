@@ -1,18 +1,33 @@
-const _toString = Object.prototype.toString
+import { isFunction, isObject } from './utils'
 
-function isFunction(obj) {
-    return typeof obj === 'function' || false
-}
-
-function isObject(obj) {
-    return _toString.call(obj) === '[object Object]' || false
-}
-
+/**
+ * 状态存储
+ */
 let _state = null
+
+/**
+ * 参数
+ */
+let _options = null
+
+/**
+ * 页面实例
+ */
 const _subjects = []
+
+/**
+ * 观察者
+ */
 const _observers = []
 
+/**
+ * 连接器
+ * @param {Function} mapStateToData
+ * @param {Function} mapMethodToPage
+ * @return {Function}
+ */
 function connect(mapStateToData, mapMethodToPage) {
+    const { slow } = _options
     if (mapStateToData !== undefined && !isFunction(mapStateToData)) {
         throw new Error(
             `connect first param accept a function, but got a ${typeof mapStateToData}`
@@ -53,7 +68,8 @@ function connect(mapStateToData, mapMethodToPage) {
             }
             pageObject[methodKey] = methodMap[methodKey]
         }
-        const onLoad = pageObject.onLoad
+        const actionKey = slow ? 'onShow' : 'onLoad'
+        const onActive = pageObject[actionKey]
         const onUnload = pageObject.onUnload
         pageObject.onLoad = function(options) {
             if (!~_subjects.indexOf(this)) {
@@ -63,7 +79,7 @@ function connect(mapStateToData, mapMethodToPage) {
                     this.setData(mapStateToData ? mapStateToData(_state) : {})
                 })
             }
-            onLoad && onLoad.call(this, options)
+            onActive && onActive.call(this, options)
         }
         pageObject.onUnload = function() {
             const index = _subjects.indexOf(this)
@@ -77,6 +93,10 @@ function connect(mapStateToData, mapMethodToPage) {
     }
 }
 
+/**
+ * 同步状态修改
+ * @param {Object | Function} state
+ */
 function setState(state) {
     let newState = state
     if (isFunction(state)) {
@@ -88,7 +108,15 @@ function setState(state) {
     })
 }
 
-function createStore(state) {
+/**
+ * 初始化 Store
+ * @param {Object} state
+ * @param {Object} options
+ * @return {Object}
+ */
+function createStore(state, options = {}) {
+    _options = options
+    if (!isObject(state)) throw Error('init state can not be undefined')
     if (_state) {
         console.warn(
             'there are multiple store active. This might lead to unexpected results.'
