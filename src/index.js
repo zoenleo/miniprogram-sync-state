@@ -6,11 +6,6 @@ import { isFunction, isObject, Warn, Err } from './utils'
 let _state = null
 
 /**
- * 参数
- */
-let _options = null
-
-/**
  * 页面实例
  */
 let _subjects = []
@@ -27,7 +22,6 @@ let _observers = []
  * @return {Function}
  */
 function connect(mapStateToData, mapMethodToPage) {
-    const { slow } = _options
     if (mapStateToData !== undefined && !isFunction(mapStateToData)) {
         Err(
             `connect first param accept a function, but got a ${typeof mapStateToData}`
@@ -68,8 +62,7 @@ function connect(mapStateToData, mapMethodToPage) {
             }
             pageObject[methodKey] = methodMap[methodKey]
         }
-        const actionKey = slow ? 'onShow' : 'onLoad'
-        const onActive = pageObject[actionKey]
+        const onLoad = pageObject.onLoad
         const onUnload = pageObject.onUnload
         pageObject.onLoad = function(options) {
             if (!~_subjects.indexOf(this)) {
@@ -79,7 +72,7 @@ function connect(mapStateToData, mapMethodToPage) {
                     this.setData(mapStateToData ? mapStateToData(_state) : {})
                 })
             }
-            onActive && onActive.call(this, options)
+            onLoad && onLoad.call(this, options)
         }
         pageObject.onUnload = function() {
             const index = _subjects.indexOf(this)
@@ -111,11 +104,9 @@ function setState(state) {
 /**
  * 初始化 Store
  * @param {Object} state
- * @param {Object} options
  * @return {Object}
  */
-function createStore(state, options = {}) {
-    _options = options
+function createStore(state) {
     if (!isObject(state)) throw Error('init state can not be undefined')
     if (_state) {
         Warn(

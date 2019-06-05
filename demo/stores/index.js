@@ -1,5 +1,5 @@
-import _stores from './stores'
-const { createStore } = require('miniprogram-sync-state')
-const store = createStore(_stores)
+import initState from './state.js'
+const { createStore } = require('./store.js')
+const store = createStore(initState)
 
 module.exports = store
