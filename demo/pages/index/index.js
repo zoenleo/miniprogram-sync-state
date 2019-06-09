@@ -4,15 +4,7 @@ const app = getApp()
 const { connect } = app.Store
 
 const IndexPage = {
-    data: {},
-    onLoad: function() {},
-    onShow() {},
-    onShareAppMessage({ from, target }, webViewUrl) {
-        return {
-            title: '分享页面',
-            path: this.route
-        }
-    }
+    data: {}
 }
 
 const ConnectPage = connect(state => {

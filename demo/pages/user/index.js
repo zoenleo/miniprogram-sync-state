@@ -3,9 +3,13 @@ const app = getApp()
 const { connect, setState } = app.Store
 
 const UserPages = {
-    onLoad() {},
+    onLoad() {
+        console.warn('page load')
+    },
     onShow() {},
-    onUnload() {},
+    onUnload() {
+        console.warn('page unload')
+    },
     bindLogin() {
         wx.navigateTo({
             url: '../login/index'

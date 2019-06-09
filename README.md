@@ -22,12 +22,45 @@ const { createStore } = require('miniprogram-sync-state')
 
 #### 直接引入
 
-复制src文件夹下的index.js置于项目文件夹内引用
+复制node_modules/miniprogram-sync-state项目(或自行clone github项目npm run build生成)下的小程序生成文件miniprogram_dist/index.js置于项目文件夹内引用
 ```
 const { createStore } = require('../../libs/miniprogram-sync-state/index.js')
 ```
 
 ## 使用
+
+#### API
+
+
+```
+const { createStore, connect, connectComponent, setState } = require('miniprogram-sync-state')
+
+/**
+* connect
+* @param {Function} mapStateToData
+* @param {Function} mapMethodToPage
+* @return {Function}
+*/
+
+/**
+ * connectComponent
+ * @param {Function} mapStateToData
+ * @param {Function} mapMethodToPage
+ * @return {Function}
+ */
+
+ /**
+ * createStore
+ * @param {Object} state
+ * @return {Object}
+ */
+
+ /**
+ * setState
+ * @param {Object | Function} state
+ */
+
+```
 
 #### 示例
 
@@ -111,3 +144,9 @@ const ConnectPage = connect(
 )(Page)
 
 ```
+
+## 更新
+
++ 1.1.0
+    新增组件连接器（connectConponent）
+    代码优化

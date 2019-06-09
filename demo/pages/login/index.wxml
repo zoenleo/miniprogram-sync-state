@@ -1,4 +1,5 @@
 <view class="page container">
+    <user-info></user-info>
     <view class="row">
         <view class="col-10">
             <text>用户名</text>

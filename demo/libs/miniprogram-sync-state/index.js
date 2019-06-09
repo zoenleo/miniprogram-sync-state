@@ -180,10 +180,6 @@ module.exports = /******/ (function(modules) {
                                 : _typeof(mapMethodToPage))
                     )
                 }
-                var dataMap = mapStateToData ? mapStateToData(_state) : {}
-                var methodMap = mapMethodToPage
-                    ? mapMethodToPage(setState, _state)
-                    : {}
                 return function(pageObject) {
                     if (!(0, _utils.isObject)(pageObject)) {
                         ;(0, _utils.Err)(
@@ -193,6 +189,10 @@ module.exports = /******/ (function(modules) {
                                     : _typeof(pageObject))
                         )
                     }
+                    var dataMap = mapStateToData ? mapStateToData(_state) : {}
+                    var methodMap = mapMethodToPage
+                        ? mapMethodToPage(setState, _state)
+                        : {}
                     for (var dataKey in dataMap) {
                         if (pageObject.data) {
                             if (pageObject.data.hasOwnProperty(dataKey)) {
@@ -221,7 +221,7 @@ module.exports = /******/ (function(modules) {
                         }
                         pageObject[methodKey] = methodMap[methodKey]
                     }
-                    var onLoad = pageObject[onLoad]
+                    var onLoad = pageObject.onLoad
                     var onUnload = pageObject.onUnload
                     pageObject.onLoad = function(options) {
                         var _this = this
@@ -246,6 +246,142 @@ module.exports = /******/ (function(modules) {
                             _observers.splice(index, 1)
                         }
                         onUnload && onUnload.call(this)
+                    }
+                    return pageObject
+                }
+            }
+
+            /**
+             * 组件连接器
+             * @param {Function} mapStateToData
+             * @param {Function} mapMethodToPage
+             * @return {Function}
+             */
+            function connectComponent(mapStateToData, mapMethodToPage) {
+                if (
+                    mapStateToData !== undefined &&
+                    !(0, _utils.isFunction)(mapStateToData)
+                ) {
+                    ;(0, _utils.Err)(
+                        'connect first param accept a function, but got a ' +
+                            (typeof mapStateToData === 'undefined'
+                                ? 'undefined'
+                                : _typeof(mapStateToData))
+                    )
+                }
+                if (
+                    mapMethodToPage !== undefined &&
+                    !(0, _utils.isFunction)(mapMethodToPage)
+                ) {
+                    ;(0, _utils.Err)(
+                        'connect second param accept a function, but got a ' +
+                            (typeof mapMethodToPage === 'undefined'
+                                ? 'undefined'
+                                : _typeof(mapMethodToPage))
+                    )
+                }
+                return function(pageObject) {
+                    if (!(0, _utils.isObject)(pageObject)) {
+                        ;(0, _utils.Err)(
+                            'page object connect accept a page object, but got a ' +
+                                (typeof pageObject === 'undefined'
+                                    ? 'undefined'
+                                    : _typeof(pageObject))
+                        )
+                    }
+                    var dataMap = mapStateToData ? mapStateToData(_state) : {}
+                    var methodMap = mapMethodToPage
+                        ? mapMethodToPage(setState, _state)
+                        : {}
+                    for (var dataKey in dataMap) {
+                        if (pageObject.hasOwnProperty('data')) {
+                            if (pageObject.data.hasOwnProperty(dataKey)) {
+                                ;(0, _utils.Warn)(
+                                    'page object had data ' +
+                                        dataKey +
+                                        ', connect map will cover this prop.'
+                                )
+                            }
+                            pageObject.data[dataKey] = dataMap[dataKey]
+                        } else {
+                            var _pageObject$data2
+
+                            pageObject.data = ((_pageObject$data2 = {}),
+                            (_pageObject$data2[dataKey] = dataMap[dataKey]),
+                            _pageObject$data2)
+                        }
+                    }
+                    for (var methodKey in methodMap) {
+                        if (methodMap.hasOwnProperty('mothods')) {
+                            if (pageObject.hasOwnProperty(methodKey)) {
+                                ;(0, _utils.Warn)(
+                                    'page object had method ' +
+                                        methodKey +
+                                        ', connect map will cover this method.'
+                                )
+                            }
+                            pageObject.mothods[methodKey] = methodMap[methodKey]
+                        } else {
+                            var _pageObject$mothods
+
+                            pageObject.mothods = ((_pageObject$mothods = {}),
+                            (_pageObject$mothods[methodKey] =
+                                methodMap[methodKey]),
+                            _pageObject$mothods)
+                        }
+                    }
+                    var attached =
+                        (pageObject.hasOwnProperty('lifetimes') &&
+                            pageObject.lifetimes.attached) ||
+                        pageObject.attached
+                    var detached =
+                        (pageObject.hasOwnProperty('lifetimes') &&
+                            pageObject.lifetimes.detached) ||
+                        pageObject.detached
+
+                    var attachedCache = function attachedCache(options) {
+                        var _this2 = this
+
+                        if (!~_subjects.indexOf(this)) {
+                            this.setData(
+                                mapStateToData ? mapStateToData(_state) : {}
+                            )
+                            _subjects.push(this)
+                            _observers.push(function() {
+                                _this2.setData(
+                                    mapStateToData ? mapStateToData(_state) : {}
+                                )
+                            })
+                        }
+                        attached && attached.call(this, options)
+                    }
+                    var detachedCache = function detachedCache() {
+                        var index = _subjects.indexOf(this)
+                        if (!~index) {
+                            _subjects.splice(index, 1)
+                            _observers.splice(index, 1)
+                        }
+                        detached && detached.call(this)
+                    }
+
+                    /**
+                     * 兼容2.2.3以下版本
+                     */
+                    if (
+                        pageObject.hasOwnProperty('lifetimes') &&
+                        pageObject.lifetimes.attached
+                    ) {
+                        pageObject.lifetimes.attached = attachedCache
+                    } else {
+                        pageObject.attached = attachedCache
+                    }
+                    if (
+                        pageObject.hasOwnProperty('lifetimes') &&
+                        pageObject.lifetimes.detached
+                    ) {
+                        pageObject.lifetimes.detached = detachedCache
+                    } else {
+                        pageObject.detached = detachedCache
                     }
                     return pageObject
                 }
@@ -285,6 +421,7 @@ module.exports = /******/ (function(modules) {
 
             var _Store = {
                 connect: connect,
+                connectComponent: connectComponent,
                 setState: setState,
                 createStore: createStore
             }

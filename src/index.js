@@ -32,14 +32,16 @@ function connect(mapStateToData, mapMethodToPage) {
             `connect second param accept a function, but got a ${typeof mapMethodToPage}`
         )
     }
-    const dataMap = mapStateToData ? mapStateToData(_state) : {}
-    const methodMap = mapMethodToPage ? mapMethodToPage(setState, _state) : {}
     return function(pageObject) {
         if (!isObject(pageObject)) {
             Err(
                 `page object connect accept a page object, but got a ${typeof pageObject}`
             )
         }
+        const dataMap = mapStateToData ? mapStateToData(_state) : {}
+        const methodMap = mapMethodToPage
+            ? mapMethodToPage(setState, _state)
+            : {}
         for (const dataKey in dataMap) {
             if (pageObject.data) {
                 if (pageObject.data.hasOwnProperty(dataKey)) {
@@ -87,6 +89,112 @@ function connect(mapStateToData, mapMethodToPage) {
 }
 
 /**
+ * 组件连接器
+ * @param {Function} mapStateToData
+ * @param {Function} mapMethodToPage
+ * @return {Function}
+ */
+function connectComponent(mapStateToData, mapMethodToPage) {
+    if (mapStateToData !== undefined && !isFunction(mapStateToData)) {
+        Err(
+            `connect first param accept a function, but got a ${typeof mapStateToData}`
+        )
+    }
+    if (mapMethodToPage !== undefined && !isFunction(mapMethodToPage)) {
+        Err(
+            `connect second param accept a function, but got a ${typeof mapMethodToPage}`
+        )
+    }
+    return function(pageObject) {
+        if (!isObject(pageObject)) {
+            Err(
+                `page object connect accept a page object, but got a ${typeof pageObject}`
+            )
+        }
+        const dataMap = mapStateToData ? mapStateToData(_state) : {}
+        const methodMap = mapMethodToPage
+            ? mapMethodToPage(setState, _state)
+            : {}
+        for (const dataKey in dataMap) {
+            if (pageObject.hasOwnProperty('data')) {
+                if (pageObject.data.hasOwnProperty(dataKey)) {
+                    Warn(
+                        `page object had data ${dataKey}, connect map will cover this prop.`
+                    )
+                }
+                pageObject.data[dataKey] = dataMap[dataKey]
+            } else {
+                pageObject.data = {
+                    [dataKey]: dataMap[dataKey]
+                }
+            }
+        }
+        for (const methodKey in methodMap) {
+            if (methodMap.hasOwnProperty('mothods')) {
+                if (pageObject.hasOwnProperty(methodKey)) {
+                    Warn(
+                        `page object had method ${methodKey}, connect map will cover this method.`
+                    )
+                }
+                pageObject.mothods[methodKey] = methodMap[methodKey]
+            } else {
+                pageObject.mothods = {
+                    [methodKey]: methodMap[methodKey]
+                }
+            }
+        }
+        const attached =
+            (pageObject.hasOwnProperty('lifetimes') &&
+                pageObject.lifetimes.attached) ||
+            pageObject.attached
+        const detached =
+            (pageObject.hasOwnProperty('lifetimes') &&
+                pageObject.lifetimes.detached) ||
+            pageObject.detached
+
+        const attachedCache = function(options) {
+            if (!~_subjects.indexOf(this)) {
+                this.setData(mapStateToData ? mapStateToData(_state) : {})
+                _subjects.push(this)
+                _observers.push(() => {
+                    this.setData(mapStateToData ? mapStateToData(_state) : {})
+                })
+            }
+            attached && attached.call(this, options)
+        }
+        const detachedCache = function() {
+            const index = _subjects.indexOf(this)
+            if (!~index) {
+                _subjects.splice(index, 1)
+                _observers.splice(index, 1)
+            }
+            detached && detached.call(this)
+        }
+
+        /**
+         * 兼容2.2.3以下版本
+         */
+        if (
+            pageObject.hasOwnProperty('lifetimes') &&
+            pageObject.lifetimes.attached
+        ) {
+            pageObject.lifetimes.attached = attachedCache
+        } else {
+            pageObject.attached = attachedCache
+        }
+        if (
+            pageObject.hasOwnProperty('lifetimes') &&
+            pageObject.lifetimes.detached
+        ) {
+            pageObject.lifetimes.detached = detachedCache
+        } else {
+            pageObject.detached = detachedCache
+        }
+        return pageObject
+    }
+}
+
+/**
  * 同步状态修改
  * @param {Object | Function} state
  */
@@ -119,6 +227,7 @@ function createStore(state) {
 
 const _Store = {
     connect,
+    connectComponent,
     setState,
     createStore
 }

@@ -2,8 +2,13 @@ let app = getApp()
 const { connect } = app.Store
 
 const LoginPage = {
-    onReady(e) {},
+    onLoad() {
+        console.warn('page load')
+    },
     onShow() {},
+    onUnload() {
+        console.warn('page unload')
+    },
     bindUserNameChange(e) {
         this.setData({
             username: e.detail.value
