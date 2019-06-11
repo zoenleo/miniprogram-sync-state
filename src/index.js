@@ -215,7 +215,8 @@ function setState(state) {
  * @return {Object}
  */
 function createStore(state) {
-    if (!isObject(state)) throw Error('init state can not be undefined')
+    if (!isObject(state))
+        Err(`init state accept a object，bug get a ${typeof state}`)
     if (_state) {
         Warn(
             'there are multiple store active. This might lead to unexpected results.'
