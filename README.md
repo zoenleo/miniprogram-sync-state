@@ -1,6 +1,7 @@
 # miniprogram-sync-state
 
-原生小程序同步状态库。
+零侵入，移植和移除都极其方便的一款原生小程序同步状态库。
+类react-redux api风格。
 
 ## 安装
 
