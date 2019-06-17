@@ -1,6 +1,27 @@
 import { isFunction, isObject, Warn, Err } from './utils'
 
 /**
+ * 浅比较当前date和新的stateMap，并返回更小粒度的更新
+ * @param {String} data
+ * @param {String} stateMap
+ * @return {Object | false}
+ */
+
+function shallowDiffData(data, stateMap) {
+    if (!isObject(stateMap)) return false
+    let newMap = {}
+    let hasDiff = false
+    for (let key in stateMap) {
+        if (stateMap[key] !== data[key]) {
+            hasDiff = true
+            newMap[key] = stateMap[key]
+        }
+    }
+    console.log('%c this is colored', hasDiff && newMap)
+    return hasDiff && newMap
+}
+
+/**
  * 状态存储
  */
 let _state = null
@@ -68,10 +89,18 @@ function connect(mapStateToData, mapMethodToPage) {
         const onUnload = pageObject.onUnload
         pageObject.onLoad = function(options) {
             if (!~_subjects.indexOf(this)) {
-                this.setData(mapStateToData ? mapStateToData(_state) : {})
+                let stateMap = shallowDiffData(
+                    this.data,
+                    mapStateToData(_state)
+                )
+                stateMap && this.setData(stateMap)
                 _subjects.push(this)
                 _observers.push(() => {
-                    this.setData(mapStateToData ? mapStateToData(_state) : {})
+                    let stateMap = shallowDiffData(
+                        this.data,
+                        mapStateToData(_state)
+                    )
+                    stateMap && this.setData(stateMap)
                 })
             }
             onLoad && onLoad.call(this, options)
@@ -154,10 +183,18 @@ function connectComponent(mapStateToData, mapMethodToPage) {
 
         const attachedCache = function(options) {
             if (!~_subjects.indexOf(this)) {
-                this.setData(mapStateToData ? mapStateToData(_state) : {})
+                let stateMap = shallowDiffData(
+                    this.data,
+                    mapStateToData(_state)
+                )
+                stateMap && this.setData(stateMap)
                 _subjects.push(this)
                 _observers.push(() => {
-                    this.setData(mapStateToData ? mapStateToData(_state) : {})
+                    let stateMap = shallowDiffData(
+                        this.data,
+                        mapStateToData(_state)
+                    )
+                    stateMap && this.setData(stateMap)
                 })
             }
             attached && attached.call(this, options)

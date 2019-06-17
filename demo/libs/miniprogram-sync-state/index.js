@@ -137,6 +137,27 @@ module.exports = /******/ (function(modules) {
             var _utils = __webpack_require__(1)
 
             /**
+             * 浅比较当前date和新的stateMap，并返回更小粒度的更新
+             * @param {String} data
+             * @param {String} stateMap
+             * @return {Object | false}
+             */
+
+            function shallowDiffData(data, stateMap) {
+                if (!(0, _utils.isObject)(stateMap)) return false
+                var newMap = {}
+                var hasDiff = false
+                for (var key in stateMap) {
+                    if (stateMap[key] !== data[key]) {
+                        hasDiff = true
+                        newMap[key] = stateMap[key]
+                    }
+                }
+                console.log('%c this is colored', hasDiff && newMap)
+                return hasDiff && newMap
+            }
+
+            /**
              * 状态存储
              */
             var _state = null
@@ -227,14 +248,18 @@ module.exports = /******/ (function(modules) {
                         var _this = this
 
                         if (!~_subjects.indexOf(this)) {
-                            this.setData(
-                                mapStateToData ? mapStateToData(_state) : {}
+                            var stateMap = shallowDiffData(
+                                this.data,
+                                mapStateToData(_state)
                             )
+                            stateMap && this.setData(stateMap)
                             _subjects.push(this)
                             _observers.push(function() {
-                                _this.setData(
-                                    mapStateToData ? mapStateToData(_state) : {}
+                                var stateMap = shallowDiffData(
+                                    _this.data,
+                                    mapStateToData(_state)
                                 )
+                                stateMap && _this.setData(stateMap)
                             })
                         }
                         onLoad && onLoad.call(this, options)
@@ -343,14 +368,18 @@ module.exports = /******/ (function(modules) {
                         var _this2 = this
 
                         if (!~_subjects.indexOf(this)) {
-                            this.setData(
-                                mapStateToData ? mapStateToData(_state) : {}
+                            var stateMap = shallowDiffData(
+                                this.data,
+                                mapStateToData(_state)
                             )
+                            stateMap && this.setData(stateMap)
                             _subjects.push(this)
                             _observers.push(function() {
-                                _this2.setData(
-                                    mapStateToData ? mapStateToData(_state) : {}
+                                var stateMap = shallowDiffData(
+                                    _this2.data,
+                                    mapStateToData(_state)
                                 )
+                                stateMap && _this2.setData(stateMap)
                             })
                         }
                         attached && attached.call(this, options)
@@ -409,7 +438,12 @@ module.exports = /******/ (function(modules) {
              */
             function createStore(state) {
                 if (!(0, _utils.isObject)(state))
-                    throw Error('init state can not be undefined')
+                    (0, _utils.Err)(
+                        'init state accept a object\uFF0Cbug get a ' +
+                            (typeof state === 'undefined'
+                                ? 'undefined'
+                                : _typeof(state))
+                    )
                 if (_state) {
                     ;(0, _utils.Warn)(
                         'there are multiple store active. This might lead to unexpected results.'

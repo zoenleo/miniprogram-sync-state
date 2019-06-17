@@ -3,6 +3,15 @@
 零侵入，移植和移除都极其方便的一款原生小程序同步状态库。
 类react-redux api风格。
 
+## 更新
+
++ 1.2.0
+    新增diff比对，优化性能
+
++ 1.1.0
+    新增组件连接器（connectConponent）
+    代码优化
+
 ## 安装
 
 #### npm构建
@@ -145,9 +154,3 @@ const ConnectPage = connect(
 )(Page)
 
 ```
-
-## 更新
-
-+ 1.1.0
-    新增组件连接器（connectConponent）
-    代码优化
