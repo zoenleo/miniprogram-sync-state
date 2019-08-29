@@ -17,7 +17,6 @@ function shallowDiffData(data, stateMap) {
             newMap[key] = stateMap[key]
         }
     }
-    console.log('%c this is colored', hasDiff && newMap)
     return hasDiff && newMap
 }
 
