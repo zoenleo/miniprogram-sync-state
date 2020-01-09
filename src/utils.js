@@ -23,7 +23,7 @@ module.exports = {
      * console warn
      * @param {String} str
      */
-    Warn(str) {
+    warn(str) {
         console.warn(str)
     },
 
@@ -31,7 +31,7 @@ module.exports = {
      * throw Error
      * @param {String} str
      */
-    Err(str) {
+    err(str) {
         throw new Error(str)
     }
 }

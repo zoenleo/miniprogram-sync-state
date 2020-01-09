@@ -1,4 +1,4 @@
-import { isFunction, isObject, Warn, Err } from './utils'
+import { isFunction, isObject, warn, err } from './utils'
 
 /**
  * 浅比较当前date和新的stateMap，并返回更小粒度的更新
@@ -43,42 +43,39 @@ let _observers = []
  */
 function connect(mapStateToData, mapMethodToPage) {
     if (mapStateToData !== undefined && !isFunction(mapStateToData)) {
-        Err(
+        err(
             `connect first param accept a function, but got a ${typeof mapStateToData}`
         )
     }
     if (mapMethodToPage !== undefined && !isFunction(mapMethodToPage)) {
-        Err(
+        err(
             `connect second param accept a function, but got a ${typeof mapMethodToPage}`
         )
     }
     return function(pageObject) {
         if (!isObject(pageObject)) {
-            Err(
+            err(
                 `page object connect accept a page object, but got a ${typeof pageObject}`
             )
         }
+        // map state to data
+        if (!pageObject.data) pageObject.data = {}
         const dataMap = mapStateToData ? mapStateToData(_state) : {}
+        for (const dataKey in dataMap) {
+            if (pageObject.data.hasOwnProperty(dataKey)) {
+                warn(
+                    `page object had data ${dataKey}, connect map will cover this prop.`
+                )
+            }
+            pageObject.data[dataKey] = dataMap[dataKey]
+        }
         const methodMap = mapMethodToPage
             ? mapMethodToPage(setState, _state)
             : {}
-        for (const dataKey in dataMap) {
-            if (pageObject.data) {
-                if (pageObject.data.hasOwnProperty(dataKey)) {
-                    Warn(
-                        `page object had data ${dataKey}, connect map will cover this prop.`
-                    )
-                }
-                pageObject.data[dataKey] = dataMap[dataKey]
-            } else {
-                pageObject.data = {
-                    [dataKey]: dataMap[dataKey]
-                }
-            }
-        }
+        // map method to page
         for (const methodKey in methodMap) {
             if (pageObject.hasOwnProperty(methodKey)) {
-                Warn(
+                warn(
                     `page object had method ${methodKey}, connect map will cover this method.`
                 )
             }
@@ -124,52 +121,42 @@ function connect(mapStateToData, mapMethodToPage) {
  */
 function connectComponent(mapStateToData, mapMethodToPage) {
     if (mapStateToData !== undefined && !isFunction(mapStateToData)) {
-        Err(
+        err(
             `connect first param accept a function, but got a ${typeof mapStateToData}`
         )
     }
     if (mapMethodToPage !== undefined && !isFunction(mapMethodToPage)) {
-        Err(
+        err(
             `connect second param accept a function, but got a ${typeof mapMethodToPage}`
         )
     }
     return function(pageObject) {
         if (!isObject(pageObject)) {
-            Err(
+            err(
                 `page object connect accept a page object, but got a ${typeof pageObject}`
             )
         }
+        if (!pageObject.data) pageObject.data = {}
         const dataMap = mapStateToData ? mapStateToData(_state) : {}
+        for (const dataKey in dataMap) {
+            if (pageObject.data.hasOwnProperty(dataKey)) {
+                warn(
+                    `page object had data ${dataKey}, connect map will cover this prop.`
+                )
+            }
+            pageObject.data[dataKey] = dataMap[dataKey]
+        }
+        if (!pageObject.mothods) pageObject.mothods = {}
         const methodMap = mapMethodToPage
             ? mapMethodToPage(setState, _state)
             : {}
-        for (const dataKey in dataMap) {
-            if (pageObject.hasOwnProperty('data')) {
-                if (pageObject.data.hasOwnProperty(dataKey)) {
-                    Warn(
-                        `page object had data ${dataKey}, connect map will cover this prop.`
-                    )
-                }
-                pageObject.data[dataKey] = dataMap[dataKey]
-            } else {
-                pageObject.data = {
-                    [dataKey]: dataMap[dataKey]
-                }
-            }
-        }
         for (const methodKey in methodMap) {
-            if (methodMap.hasOwnProperty('mothods')) {
-                if (pageObject.hasOwnProperty(methodKey)) {
-                    Warn(
-                        `page object had method ${methodKey}, connect map will cover this method.`
-                    )
-                }
-                pageObject.mothods[methodKey] = methodMap[methodKey]
-            } else {
-                pageObject.mothods = {
-                    [methodKey]: methodMap[methodKey]
-                }
+            if (pageObject.hasOwnProperty(methodKey)) {
+                warn(
+                    `page object had method ${methodKey}, connect map will cover this method.`
+                )
             }
+            pageObject.mothods[methodKey] = methodMap[methodKey]
         }
         const attached =
             (pageObject.hasOwnProperty('lifetimes') &&
@@ -252,12 +239,12 @@ function setState(state) {
  */
 function createStore(state) {
     if (!isObject(state))
-        Err(`init state accept a object，bug get a ${typeof state}`)
-    if (_state) {
-        Warn(
+        err(`init state accept a object，bug get a ${typeof state}`)
+    if (_state)
+        warn(
             'there are multiple store active. This might lead to unexpected results.'
         )
-    }
+
     _state = Object.assign({}, state)
     return _Store
 }
