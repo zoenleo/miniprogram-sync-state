@@ -1,4 +1,4 @@
-const { createStore } = require('../libs/miniprogram-sync-state/index')
+const { createStore } = require('miniprogram-sync-state')
 import initState from './state.js'
 
 const store = createStore(initState)
