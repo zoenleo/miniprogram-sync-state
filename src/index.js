@@ -146,7 +146,7 @@ function connectComponent(mapStateToData, mapMethodToPage) {
             }
             pageObject.data[dataKey] = dataMap[dataKey]
         }
-        if (!pageObject.mothods) pageObject.mothods = {}
+        if (!pageObject.methods) pageObject.methods = {}
         const methodMap = mapMethodToPage
             ? mapMethodToPage(setState, _state)
             : {}
@@ -156,7 +156,7 @@ function connectComponent(mapStateToData, mapMethodToPage) {
                     `page object had method ${methodKey}, connect map will cover this method.`
                 )
             }
-            pageObject.mothods[methodKey] = methodMap[methodKey]
+            pageObject.methods[methodKey] = methodMap[methodKey]
         }
         const attached =
             (pageObject.hasOwnProperty('lifetimes') &&

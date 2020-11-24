@@ -1,30 +1,30 @@
 # miniprogram-sync-state
 
 零侵入，移植和移除都极其方便的一款原生小程序同步状态库。
-类react-redux api风格。
+类 react-redux api 风格。
 
 ## 更新
 
-+ 1.2.0
-    新增diff比对，优化性能
+-   1.2.0
+    新增 diff 比对，优化性能
 
-+ 1.1.0
-    新增组件连接器（connectConponent）
+-   1.1.0
+    新增组件连接器（connectComponent）
     代码优化
 
 ## 安装
 
-#### npm构建
+#### npm 构建
 
-> npm使用此库需要依赖小程序基础库 2.2.1 以上版本，同时依赖开发者工具的 npm 构建。具体详情可查阅[官方 npm 文档](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html)。
+> npm 使用此库需要依赖小程序基础库 2.2.1 以上版本，同时依赖开发者工具的 npm 构建。具体详情可查阅[官方 npm 文档](https://developers.weixin.qq.com/miniprogram/dev/devtools/npm.html)。
 
 ```bash
 npm install --save miniprogram-sync-state
 ```
 
-小程序开发者工具 -> 详情 -> 使用npm模块
+小程序开发者工具 -> 详情 -> 使用 npm 模块
 
-小程序开发者工具 -> 工具 -> 构建npm
+小程序开发者工具 -> 工具 -> 构建 npm
 
 ```
 const { createStore } = require('miniprogram-sync-state')
@@ -32,7 +32,8 @@ const { createStore } = require('miniprogram-sync-state')
 
 #### 直接引入
 
-复制node_modules/miniprogram-sync-state项目(或自行clone github项目npm run build生成)下的小程序生成文件miniprogram_dist/index.js置于项目文件夹内引用
+复制 node_modules/miniprogram-sync-state 项目(或自行 clone github 项目 npm run build 生成)下的小程序生成文件 miniprogram_dist/index.js 置于项目文件夹内引用
+
 ```
 const { createStore } = require('../../libs/miniprogram-sync-state/index.js')
 ```
@@ -40,7 +41,6 @@ const { createStore } = require('../../libs/miniprogram-sync-state/index.js')
 ## 使用
 
 #### API
-
 
 ```
 const { createStore, connect, connectComponent, setState } = require('miniprogram-sync-state')
@@ -78,7 +78,7 @@ const { createStore, connect, connectComponent, setState } = require('miniprogra
 // app.js
 
 const initStore = {
-    hasLogin: false,    
+    hasLogin: false,
     userName: ''
 }
 const { createStore } = require('miniprogram-sync-state')
@@ -88,8 +88,6 @@ App({
     onLaunch() {},
     Store
 })
-
-
 ```
 
 ```js
@@ -115,7 +113,7 @@ const LoginPage = {
     }
 }
 const ConnectPage = connect(
-    ({hasLogin, userName}) => {
+    ({ hasLogin, userName }) => {
         return {
             hasLogin,
             userName
@@ -132,7 +130,6 @@ const ConnectPage = connect(
 )(LoginPage)
 
 Page(ConnectPage)
-
 ```
 
 更具体使用可查看[demo](https://github.com/zoenleo/miniprogram-sync-state/tree/master/demo)
@@ -144,13 +141,10 @@ Page(ConnectPage)
 ```js
 // 🚫 以下为禁止示例
 
-const ConnectPage = connect(
-    state => {
-        state.userInfo.userName = 'err use'
-        return {
-            userInfo: state.userInfo
-        }
+const ConnectPage = connect(state => {
+    state.userInfo.userName = 'err use'
+    return {
+        userInfo: state.userInfo
     }
-)(Page)
-
+})(Page)
 ```
